@@ -369,7 +369,11 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
+<<<<<<< Updated upstream
     <frame x="470" y="262" width="1493" height="833" extended-state="0" />
+=======
+    <frame x="72" y="170" width="1493" height="833" extended-state="0" />
+>>>>>>> Stashed changes
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24849297" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
