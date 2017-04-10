@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -87,6 +87,95 @@ var ErrorCode = exports.ErrorCode = {
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * Created by Joy on 4/9/17.
+ */
+
+var Profile = function (_React$Component) {
+    _inherits(Profile, _React$Component);
+
+    function Profile() {
+        _classCallCheck(this, Profile);
+
+        var _this = _possibleConstructorReturn(this, (Profile.__proto__ || Object.getPrototypeOf(Profile)).call(this));
+
+        _this.state = {
+            logOutStatus: false
+        };
+
+        _this.logOutHandler = _this.logOutHandler.bind(_this);
+        return _this;
+    }
+
+    _createClass(Profile, [{
+        key: 'logOutHandler',
+        value: function logOutHandler() {
+            $.ajax({
+                url: "http://omniscient.us-west-1.elasticbeanstalk.com/profile/logout",
+                dataType: 'json',
+                type: 'POST',
+                cache: false,
+                success: function (data) {
+                    if (data.success) {
+                        this.props.afterLogOut();
+                    }
+                }.bind(this)
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var logOutMessage = null;
+            if (this.state.logOutStatus) {
+                logOutMessage = "You've logged out successfully!";
+            } else {
+                logOutMessage = React.createElement(
+                    'a',
+                    { href: '#', onClick: this.logOutHandler },
+                    'log out'
+                );
+            }
+            return React.createElement(
+                'div',
+                { className: 'profile col-sm-2' },
+                React.createElement(
+                    'h2',
+                    { id: 'userName' },
+                    this.props.userName
+                ),
+                React.createElement(
+                    'div',
+                    { id: 'logOutMessage' },
+                    logOutMessage
+                )
+            );
+        }
+    }]);
+
+    return Profile;
+}(React.Component);
+
+exports.default = Profile;
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -216,7 +305,7 @@ var SignIn = function (_React$Component) {
 exports.default = SignIn;
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -376,7 +465,7 @@ var SignUp = function (_React$Component) {
 exports.default = SignUp;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -386,13 +475,21 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _Constants = __webpack_require__(0);
 
-var _SignIn = __webpack_require__(1);
+var _SignIn = __webpack_require__(2);
 
 var _SignIn2 = _interopRequireDefault(_SignIn);
 
-var _SignUp = __webpack_require__(2);
+var _SignUp = __webpack_require__(3);
 
 var _SignUp2 = _interopRequireDefault(_SignUp);
+
+var _Profile = __webpack_require__(1);
+
+var _Profile2 = _interopRequireDefault(_Profile);
+
+var _Item = __webpack_require__(6);
+
+var _Item2 = _interopRequireDefault(_Item);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -413,7 +510,7 @@ var Page = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (Page.__proto__ || Object.getPrototypeOf(Page)).call(this));
 
         _this.state = {
-            profile: 'SignUp',
+            profile: null,
             userName: null
 
         };
@@ -424,13 +521,19 @@ var Page = function (_React$Component) {
     }
 
     _createClass(Page, [{
-        key: 'beforeRender',
-        value: function beforeRender() {
+        key: 'componentWillMount',
+        value: function componentWillMount() {
             $.ajax({
                 url: 'http://omniscient.us-west-1.elasticbeanstalk.com/profile',
                 dataType: 'json',
                 cache: false,
-                success: function success() {}
+                success: function (data) {
+                    if (data.success === false) {
+                        this.setState({ profile: 'SignUp' });
+                    } else if (data.profile.user_name) {
+                        this.setState({ profile: 'SignedIn', userName: data.profile.user_name });
+                    }
+                }.bind(this)
             });
         }
     }, {
@@ -464,7 +567,7 @@ var Page = function (_React$Component) {
             } else if (this.state.profile === 'SignIn') {
                 profilePanel = React.createElement(_SignIn2.default, { profileToggle: this.profileToggle, afterSigned: this.afterSigned });
             } else if (this.state.profile === 'SignedIn') {
-                profilePanel = React.createElement(Profile, { userName: this.state.userName, afterLogOut: this.afterLogOut });
+                profilePanel = React.createElement(_Profile2.default, { userName: this.state.userName, afterLogOut: this.afterLogOut });
             }
             return React.createElement(
                 'div',
@@ -478,72 +581,8 @@ var Page = function (_React$Component) {
     return Page;
 }(React.Component);
 
-var Profile = function (_React$Component2) {
-    _inherits(Profile, _React$Component2);
-
-    function Profile() {
-        _classCallCheck(this, Profile);
-
-        var _this2 = _possibleConstructorReturn(this, (Profile.__proto__ || Object.getPrototypeOf(Profile)).call(this));
-
-        _this2.state = {
-            logOutStatus: false
-        };
-
-        _this2.logOutHandler = _this2.logOutHandler.bind(_this2);
-        return _this2;
-    }
-
-    _createClass(Profile, [{
-        key: 'logOutHandler',
-        value: function logOutHandler() {
-            $.ajax({
-                url: "http://omniscient.us-west-1.elasticbeanstalk.com/profile/logout",
-                dataType: 'json',
-                type: 'POST',
-                cache: false,
-                success: function (data) {
-                    if (data.success) {
-                        this.props.afterLogOut();
-                    }
-                }.bind(this)
-            });
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var logOutMessage = null;
-            if (this.state.logOutStatus) {
-                logOutMessage = "You've logged out successfully!";
-            } else {
-                logOutMessage = React.createElement(
-                    'a',
-                    { href: '#', onClick: this.logOutHandler },
-                    'log out'
-                );
-            }
-            return React.createElement(
-                'div',
-                { className: 'profile col-sm-2' },
-                React.createElement(
-                    'h2',
-                    { id: 'userName' },
-                    this.props.userName
-                ),
-                React.createElement(
-                    'div',
-                    { id: 'logOutMessage' },
-                    logOutMessage
-                )
-            );
-        }
-    }]);
-
-    return Profile;
-}(React.Component);
-
-var Window = function (_React$Component3) {
-    _inherits(Window, _React$Component3);
+var Window = function (_React$Component2) {
+    _inherits(Window, _React$Component2);
 
     function Window() {
         _classCallCheck(this, Window);
@@ -553,6 +592,13 @@ var Window = function (_React$Component3) {
 
     _createClass(Window, [{
         key: 'render',
+
+        /*constructor() {
+            super();
+            this.state = {
+             }
+        }*/
+
         value: function render() {
 
             return React.createElement(
@@ -566,48 +612,8 @@ var Window = function (_React$Component3) {
     return Window;
 }(React.Component);
 
-var Item = function (_React$Component4) {
-    _inherits(Item, _React$Component4);
-
-    function Item() {
-        _classCallCheck(this, Item);
-
-        var _this4 = _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).call(this));
-
-        _this4.itemCompletedHandler = _this4.itemCompletedHandler.bind(_this4);
-        return _this4;
-    }
-
-    _createClass(Item, [{
-        key: 'itemCompletedHandler',
-        value: function itemCompletedHandler() {
-            if (this.props.item.completed === false) {
-                this.setState({ completed: true });
-            } else {
-                this.setState({ completed: false });
-            }
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            return React.createElement(
-                'div',
-                { className: 'item' },
-                React.createElement('input', { type: 'checkbox', onClick: this.itemCompleteHandler }),
-                React.createElement(
-                    'p',
-                    { className: 'itemContent' },
-                    this.props.item.itemContent
-                )
-            );
-        }
-    }]);
-
-    return Item;
-}(React.Component);
-
-var CommandBox = function (_React$Component5) {
-    _inherits(CommandBox, _React$Component5);
+var CommandBox = function (_React$Component3) {
+    _inherits(CommandBox, _React$Component3);
 
     function CommandBox() {
         _classCallCheck(this, CommandBox);
@@ -630,6 +636,71 @@ var CommandBox = function (_React$Component5) {
 }(React.Component);
 
 ReactDOM.render(React.createElement(Page, null), document.getElementById('content'));
+
+/***/ }),
+/* 5 */,
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * Created by Joy on 4/9/17.
+ */
+var Item = function (_React$Component) {
+    _inherits(Item, _React$Component);
+
+    function Item() {
+        _classCallCheck(this, Item);
+
+        var _this = _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).call(this));
+
+        _this.itemCompletedHandler = _this.itemCompletedHandler.bind(_this);
+        return _this;
+    }
+
+    _createClass(Item, [{
+        key: "itemCompletedHandler",
+        value: function itemCompletedHandler() {
+            if (this.props.item.completed === false) {
+                this.setState({ completed: true });
+            } else {
+                this.setState({ completed: false });
+            }
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "item" },
+                React.createElement("input", { type: "checkbox", onClick: this.itemCompleteHandler }),
+                React.createElement(
+                    "p",
+                    { className: "itemContent" },
+                    this.props.item.itemContent
+                )
+            );
+        }
+    }]);
+
+    return Item;
+}(React.Component);
+
+exports.default = Item;
 
 /***/ })
 /******/ ]);
