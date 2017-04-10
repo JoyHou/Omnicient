@@ -1,0 +1,8 @@
+export const ErrorCode = {
+    // Server related 1 ~ 9999
+
+    // Account 10000 ~ 19999
+    ACCOUNT__ACCOUNT_ALREADY_EXISITS: 10001,
+    ACCOUNT__ACCOUNT_NOT_EXISITS: 10002,
+    ACCOUNT__ACCOUNT_PASSWORD_NOT_MATCH: 10003
+};
