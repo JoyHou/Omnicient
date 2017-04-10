@@ -1,4 +1,5 @@
 import {ErrorCode} from '../Constants'
+import Config from '../Config'
 
 export default class SignIn extends React.Component{
     constructor() {
@@ -17,7 +18,7 @@ export default class SignIn extends React.Component{
     signInHandler(e) {
         e.preventDefault();
         $.ajax({
-            url: "http://omniscient.us-west-1.elasticbeanstalk.com/profile/signin",
+            url: Config.endPoint + '/profile/signin',
             dataType: 'json',
             type: 'POST',
             data: {user_name: this.state.userName, password: this.state.password},

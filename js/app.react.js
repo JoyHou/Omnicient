@@ -6,6 +6,7 @@ import {ErrorCode} from './Constants'
 import SignIn from './profile/SignIn.react'
 import SignUp from './profile/SignUp.react'
 import Profile from './profile/Profile.react'
+import Config from './Config'
 import Item from './toDoList/Item.react'
 
 class Page extends React.Component {
@@ -23,7 +24,7 @@ class Page extends React.Component {
 
     componentWillMount() {
         $.ajax({
-            url: 'http://omniscient.us-west-1.elasticbeanstalk.com/profile',
+            url: Config.endPoint + '/profile',
             dataType: 'json',
             cache: false,
             success: function(data) {

@@ -2,6 +2,8 @@
  * Created by Joy on 4/9/17.
  */
 
+import Config from '../Config'
+
 export default class Profile extends React.Component {
     constructor() {
         super();
@@ -14,7 +16,7 @@ export default class Profile extends React.Component {
 
     logOutHandler() {
         $.ajax({
-            url: "http://omniscient.us-west-1.elasticbeanstalk.com/profile/logout",
+            url: Config.endPoint + '/profile/logout',
             dataType: 'json',
             type: 'POST',
             cache: false,
