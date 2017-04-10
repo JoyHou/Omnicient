@@ -3,10 +3,6 @@
  */
 
 
-var items = [
-    {completed: false, itemContent: "buy eggs"},
-    {completed: false, itemContent: "assignment due 11th"}
-];
 const ErrorCode = {
     // Server related 1 ~ 9999
 
@@ -20,24 +16,40 @@ class Page extends React.Component {
     constructor() {
         super();
         this.state = {
-            profile: 'SignUp'
+            profile: 'SignUp',
+            userName: null
 
         };
         this.profileToggle = this.profileToggle.bind(this);
+        this.afterSigned = this.afterSigned.bind(this);
     }
 
     profileToggle() {
         if (this.state.profile === 'SignUp') {
             this.setState({profile: 'SignIn'})
-        } else {
+        } else if (this.state.profile === 'SignIn') {
             this.setState({profile: 'SignUp'})
         }
     }
 
+    afterSigned(data) {
+        this.setState({
+            profile: 'SignedIn',
+            userName: data.profile.user_name
+        });
+    }
+
+
+
     render() {
-        const profilePanel = this.state.profile === 'SignUp'
-            ? <SignUp profileToggle={this.profileToggle}/>
-            : <SignIn profileToggle={this.profileToggle}/>;
+        let profilePanel = null;
+        if (this.state.profile === 'SignUp') {
+            profilePanel = <SignUp profileToggle={this.profileToggle} afterSigned={this.afterSigned}/>;
+        } else if (this.state.profile === 'SignIn') {
+            profilePanel = <SignIn profileToggle={this.profileToggle} afterSigned={this.afterSigned}/>;
+        } else if (this.state.profile === 'SignedIn') {
+            profilePanel = <Profile userName={this.state.userName}/>;
+        }
         return (
             <div className="page">
                 {profilePanel}
@@ -51,7 +63,7 @@ class SignUp extends React.Component{
     constructor() {
         super();
         this.state = {
-            signUpMessage: null,
+            errorCode: 0,
             userName: null,
             password: null,
             confirmPassword: true
@@ -66,20 +78,16 @@ class SignUp extends React.Component{
     signUpHandler(e) {
         e.preventDefault();
         $.ajax({
-            url: "http://omniscient.us-west-1.elasticbeanstalk.com/signup",
+            url: "http://omniscient.us-west-1.elasticbeanstalk.com/profile/signup",
             dataType: 'json',
             type: 'POST',
             data: {user_name: this.state.userName, password: this.state.password},
             cache: false,
             success: function(data) {
                 if (data.success) {
-                    this.setState({signUpMessage: "You've signed up successfully!"})
+                    this.props.afterSigned(data);
                 } else {
-                    if (data.error_code === ErrorCode.ACCOUNT__ACCOUNT_ALREADY_EXISITS) {
-                        this.setState({signUpMessage: "You already have an account, please log in."})
-                    } else if (data.error_code === ErrorCode.ACCOUNT__ACCOUNT_PASSWORD_NOT_MATCH) {
-                        this.setState({signUpMessage: "User name and/or password were wrong, please try again."})
-                    }
+                    this.setState({errorCode: data.error_code})
                 }
             }.bind(this)
         })
@@ -111,6 +119,11 @@ class SignUp extends React.Component{
             confirmPasswordMessage = "";
         }
 
+        let errorMessage = "";
+        if (this.state.errorCode ===ErrorCode.ACCOUNT__ACCOUNT_ALREADY_EXISITS) {
+            errorMessage = "You already have an account, please sign in.";
+        }
+
 
         return (
             <div className="profile col-sm-2">
@@ -128,7 +141,7 @@ class SignUp extends React.Component{
                     <br/>
                     <p id="already">Already signed up? <a href="#" onClick={this.props.profileToggle}>Sign in</a></p>
                     <input type="submit" value="Sign Up" className="btn btn-success" onClick={this.signUpHandler}/>
-                    <div id="errorMessage">{this.state.signUpMessage}</div>
+                    <div id="errorMessage">{errorMessage}</div>
                 </form>
             </div>
         )
@@ -136,39 +149,121 @@ class SignUp extends React.Component{
 }
 
 class SignIn extends React.Component{
+    constructor() {
+        super();
+        this.state = {
+            errorCode: 0,
+            userName: null,
+            password: null
+        };
+
+        this.signInHandler = this.signInHandler.bind(this);
+        this.userNameHandler = this.userNameHandler.bind(this);
+        this.passwordHandler = this.passwordHandler.bind(this);
+    }
+
+    signInHandler(e) {
+        e.preventDefault();
+        $.ajax({
+            url: "http://omniscient.us-west-1.elasticbeanstalk.com/profile/signin",
+            dataType: 'json',
+            type: 'POST',
+            data: {user_name: this.state.userName, password: this.state.password},
+            cache: false,
+            success: function (data) {
+                if (data.success) {
+                    this.props.afterSigned(data);
+                } else {
+                    this.setState({errorCode: data.error_code})
+                }
+            }.bind(this)
+        })
+    }
+
+
+    userNameHandler(e) {
+        this.setState({userName: e.target.value})
+    }
+
+    passwordHandler(e) {
+        this.setState({password: e.target.value})
+    }
+
     render() {
+        let errorMessage = "";
+        if (this.state.errorCode === ErrorCode.ACCOUNT__ACCOUNT_NOT_EXISITS) {
+            errorMessage = "User name does not exist, please sign up."
+        } else if (this.state.errorCode === ErrorCode.ACCOUNT__ACCOUNT_PASSWORD_NOT_MATCH) {
+            errorMessage = "The user name and/or password were wrong, please try again."
+        }
         return (
             <div className="profile col-sm-2">
                 <h2>Sign In</h2>
                 <form className="form-horizontal">
                     <label className="control-label">User Name</label>
-                    <input className="form-control" type="text" name="userName"/>
+                    <input className="form-control" type="text" name="userName" onChange={this.userNameHandler}/>
                     <br/>
                     <label className="control-label">Password</label>
-                    <input className="form-control" type="password" name="password"/>
+                    <input className="form-control" type="password" name="password" onChange={this.passwordHandler}/>
                     <br/>
                     <p id="already">Don't have an account?<a href="#" onClick={this.props.profileToggle}> Sign up</a></p>
-                    <input type="submit" value="Sign In" className="btn btn-success"/>
+                    <input type="submit" value="Sign In" className="btn btn-success" onClick={this.signInHandler}/>
+                    <div id="errorMessage">{errorMessage}</div>
                 </form>
             </div>
         )
     }
 }
 
+class Profile extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            logOutStatus: false
+        };
+
+        this.logOutHandler = this.logOutHandler.bind(this);
+    }
+
+    logOutHandler() {
+        $.ajax({
+            url: "http://omniscient.us-west-1.elasticbeanstalk.com/profile/logout",
+            dataType: 'json',
+            type: 'POST',
+            cache: false,
+            success: function (data) {
+                if (data.success) {
+                    this.setState({logOutStatus: true})
+                }
+            }.bind(this)
+        })
+    }
+
+    render() {
+        let logOutMessage = null;
+        if (this.state.logOutStatus) {
+            logOutMessage = "You've logged out successfully!";
+        } else {
+            logOutMessage = <a href="#" onClick={this.logOutHandler}>log out</a>;
+        }
+        return (
+            <div className="profile col-sm-2">
+                <h2 id="userName">{this.props.userName}</h2>
+                <div id="logOutMessage">{logOutMessage}</div>
+            </div>
+        )
+    }
+}
+
+
+
 class Window extends React.Component {
 
     render() {
-        let itemNumber = this.props.items.length;
-
-        let renderItems = [];
-        for (let i = 0; i < itemNumber; i++) {
-            renderItems.push(<Item item={this.props.items[i]} key={i}/>);
-        }
 
         return (
             <div className="window col-sm-8">
                 <CommandBox />
-                {renderItems}
             </div>
         )
     }
@@ -212,6 +307,6 @@ class CommandBox extends React.Component {
 }
 
 ReactDOM.render(
-    <Page data={items}/>,
+    <Page />,
     document.getElementById('content')
 );
