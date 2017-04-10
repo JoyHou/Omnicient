@@ -22,6 +22,16 @@ class Page extends React.Component {
         };
         this.profileToggle = this.profileToggle.bind(this);
         this.afterSigned = this.afterSigned.bind(this);
+        this.afterLogOut = this.afterLogOut.bind(this);
+    }
+
+    beforeRender() {
+        $.ajax({
+            url: 'http://omniscient.us-west-1.elasticbeanstalk.com/profile',
+            dataType: 'json',
+            cache: false,
+            success:
+        })
     }
 
     profileToggle() {
@@ -39,7 +49,9 @@ class Page extends React.Component {
         });
     }
 
-
+    afterLogOut() {
+        this.setState({profile: 'SignIn'});
+    }
 
     render() {
         let profilePanel = null;
@@ -48,7 +60,7 @@ class Page extends React.Component {
         } else if (this.state.profile === 'SignIn') {
             profilePanel = <SignIn profileToggle={this.profileToggle} afterSigned={this.afterSigned}/>;
         } else if (this.state.profile === 'SignedIn') {
-            profilePanel = <Profile userName={this.state.userName}/>;
+            profilePanel = <Profile userName={this.state.userName} afterLogOut={this.afterLogOut}/>;
         }
         return (
             <div className="page">
@@ -233,7 +245,7 @@ class Profile extends React.Component {
             cache: false,
             success: function (data) {
                 if (data.success) {
-                    this.setState({logOutStatus: true})
+                    this.props.afterLogOut();
                 }
             }.bind(this)
         })
