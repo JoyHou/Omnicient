@@ -77,8 +77,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = {
-    //endPoint: 'http://omniscient.us-west-1.elasticbeanstalk.com',
-    endPoint: 'http://localhost'
+    endPoint: 'http://omniscient.us-west-1.elasticbeanstalk.com'
+    //endPoint: 'http://localhost',
 };
 
 /***/ }),
@@ -508,47 +508,96 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _Config = __webpack_require__(0);
+
+var _Config2 = _interopRequireDefault(_Config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by Joy on 4/9/17.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
-/**
- * Created by Joy on 4/9/17.
- */
+
 var Item = function (_React$Component) {
     _inherits(Item, _React$Component);
 
-    function Item() {
+    function Item(props) {
         _classCallCheck(this, Item);
 
-        var _this = _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).call(this));
+        var _this = _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).call(this, props));
 
+        _this.state = {
+            completed: _this.props.completed,
+            content: _this.props.content
+        };
         _this.itemCompletedHandler = _this.itemCompletedHandler.bind(_this);
+        _this.deleteHandler = _this.deleteHandler.bind(_this);
         return _this;
     }
 
     _createClass(Item, [{
-        key: "itemCompletedHandler",
+        key: 'itemCompletedHandler',
         value: function itemCompletedHandler() {
-            if (this.props.item.completed === false) {
-                this.setState({ completed: true });
-            } else {
+            if (this.state.completed) {
                 this.setState({ completed: false });
+            } else {
+                this.setState({ completed: true });
             }
+
+            $.ajax({
+                url: _Config2.default.endPoint + '/todo/update',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    content: this.state.content,
+                    completed: this.state.completed,
+                    id: this.props.id
+                },
+                cache: false,
+                success: function success(data) {
+                    if (data.success) {
+                        this.props.afterCompleteToggle(data);
+                    }
+                }
+            });
         }
     }, {
-        key: "render",
+        key: 'deleteHandler',
+        value: function deleteHandler() {
+            $.ajax({
+                url: _Config2.default.endPoint + '/todo/delete',
+                type: 'POST',
+                dataType: 'json',
+                data: { id: this.props.id },
+                cache: false,
+                success: function (data) {
+                    if (data.success) {
+                        this.props.afterDelete(data);
+                    }
+                }.bind(this)
+            });
+        }
+    }, {
+        key: 'render',
         value: function render() {
             return React.createElement(
-                "div",
-                { className: "item" },
-                React.createElement("input", { type: "checkbox", onClick: this.itemCompleteHandler }),
+                'div',
+                { className: 'itemGroup alert alert-info' },
+                React.createElement('input', { type: 'checkbox', onClick: this.itemCompletedHandler }),
                 React.createElement(
-                    "p",
-                    { className: "itemContent" },
-                    this.props.item.itemContent
+                    'div',
+                    null,
+                    this.state.content
+                ),
+                React.createElement(
+                    'a',
+                    { href: '#', onClick: this.deleteHandler },
+                    '\xD7'
                 )
             );
         }
@@ -589,6 +638,10 @@ var _Config2 = _interopRequireDefault(_Config);
 var _Item = __webpack_require__(5);
 
 var _Item2 = _interopRequireDefault(_Item);
+
+var _CommandBox = __webpack_require__(7);
+
+var _CommandBox2 = _interopRequireDefault(_CommandBox);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -668,11 +721,15 @@ var Page = function (_React$Component) {
             } else if (this.state.profile === 'SignedIn') {
                 profilePanel = React.createElement(_Profile2.default, { userName: this.state.userName, afterLogOut: this.afterLogOut });
             }
+            /*let Window_div = null;
+            if (this.state.profile === 'SignedIn') {
+                Window_div = <Window />;
+            }*/
             return React.createElement(
                 'div',
                 { className: 'page' },
                 profilePanel,
-                React.createElement(Window, { items: this.props.data })
+                React.createElement(Window, null)
             );
         }
     }]);
@@ -686,24 +743,108 @@ var Window = function (_React$Component2) {
     function Window() {
         _classCallCheck(this, Window);
 
-        return _possibleConstructorReturn(this, (Window.__proto__ || Object.getPrototypeOf(Window)).apply(this, arguments));
+        var _this2 = _possibleConstructorReturn(this, (Window.__proto__ || Object.getPrototypeOf(Window)).call(this));
+
+        _this2.state = {
+            showCompleted: false,
+            toDoList: []
+        };
+        _this2.showCompleted = _this2.showCompleted.bind(_this2);
+        _this2.afterCreateToDo = _this2.afterCreateToDo.bind(_this2);
+        _this2.afterDelete = _this2.afterDelete.bind(_this2);
+        _this2.afterCompleteToggle = _this2.afterCompleteToggle.bind(_this2);
+        return _this2;
     }
 
     _createClass(Window, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            $.ajax({
+                url: _Config2.default.endPoint + '/todo',
+                dataType: 'json',
+                cache: false,
+                success: function (data) {
+                    console.log(data);
+                    this.setState({ toDoList: data.todo_list });
+                }.bind(this)
+            });
+        }
+    }, {
+        key: 'showCompleted',
+        value: function showCompleted() {
+            if (this.state.showCompleted) {
+                this.setState({ showCompleted: false });
+            } else {
+                this.setState({ showCompleted: true });
+            }
+        }
+    }, {
+        key: 'afterCreateToDo',
+        value: function afterCreateToDo(data) {
+            this.setState({ toDoList: data.todo_list });
+        }
+    }, {
+        key: 'afterDelete',
+        value: function afterDelete(data) {
+            this.setState({ toDoList: data.todo_list });
+        }
+    }, {
+        key: 'afterCompleteToggle',
+        value: function afterCompleteToggle(data) {
+            this.setState({ toDoList: data.todo_list });
+        }
+    }, {
         key: 'render',
-
-        /*constructor() {
-            super();
-            this.state = {
-             }
-        }*/
-
         value: function render() {
+            var itemGroup = [];
+            var toDoList = this.state.toDoList;
+
+            for (var i = 0; i < toDoList.length; i++) {
+                itemGroup.push(React.createElement(_Item2.default, {
+                    content: toDoList[i].content,
+                    completed: toDoList[i].completed,
+                    id: toDoList[i].id,
+                    key: 0 + toDoList[i].id,
+                    afterDelete: this.afterDelete,
+                    afterCompleteToggle: this.afterCompleteToggle
+                }));
+            }
+
+            var uncompletedItemGroup = [];
+            for (var _i = 0; _i < toDoList.length; _i++) {
+                if (toDoList[_i].completed === false) {
+                    uncompletedItemGroup.push(React.createElement(_Item2.default, {
+                        content: toDoList[_i].content,
+                        completed: toDoList[_i].completed,
+                        id: toDoList[_i].id,
+                        key: 0 + toDoList[_i].id,
+                        afterDelete: this.afterDelete
+                    }));
+                }
+            }
+
+            var itemShowed = [];
+            if (this.state.showCompleted) {
+                itemShowed = itemGroup;
+            } else {
+                itemShowed = uncompletedItemGroup;
+            }
 
             return React.createElement(
                 'div',
                 { className: 'window col-sm-8' },
-                React.createElement(CommandBox, null)
+                React.createElement(_CommandBox2.default, { afterCreateToDo: this.afterCreateToDo }),
+                React.createElement(
+                    'div',
+                    { id: 'showCompleted' },
+                    React.createElement(
+                        'label',
+                        null,
+                        'Show completed events'
+                    ),
+                    React.createElement('input', { type: 'checkbox', onChange: this.showCompleted })
+                ),
+                itemShowed
             );
         }
     }]);
@@ -711,22 +852,86 @@ var Window = function (_React$Component2) {
     return Window;
 }(React.Component);
 
-var CommandBox = function (_React$Component3) {
-    _inherits(CommandBox, _React$Component3);
+ReactDOM.render(React.createElement(Page, null), document.getElementById('content'));
 
-    function CommandBox() {
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Config = __webpack_require__(0);
+
+var _Config2 = _interopRequireDefault(_Config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by Joy on 4/14/17.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+var CommandBox = function (_React$Component) {
+    _inherits(CommandBox, _React$Component);
+
+    function CommandBox(props) {
         _classCallCheck(this, CommandBox);
 
-        return _possibleConstructorReturn(this, (CommandBox.__proto__ || Object.getPrototypeOf(CommandBox)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (CommandBox.__proto__ || Object.getPrototypeOf(CommandBox)).call(this, props));
+
+        _this.state = {
+            toDoContent: null
+        };
+        _this.createToDo = _this.createToDo.bind(_this);
+        return _this;
     }
 
     _createClass(CommandBox, [{
+        key: 'createToDo',
+        value: function createToDo(e) {
+            e.preventDefault();
+            $.ajax({
+                url: _Config2.default.endPoint + '/todo/create',
+                dataType: 'json',
+                type: 'POST',
+                data: { content: this.state.toDoContent },
+                cache: false,
+                success: function (data) {
+                    if (data.success) {
+                        this.setState({ toDoContent: null });
+                        this.props.afterCreateToDo(data);
+                    }
+                }.bind(this)
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             return React.createElement(
                 'div',
                 { className: 'commandBox' },
-                React.createElement('input', { type: 'text', onChange: function onChange() {} })
+                React.createElement(
+                    'form',
+                    null,
+                    React.createElement('input', { type: 'text',
+                        id: 'createCommand',
+                        onChange: function onChange(e) {
+                            return _this2.setState({ toDoContent: e.target.value });
+                        } }),
+                    React.createElement('input', { id: 'createSubmit', type: 'submit', onClick: this.createToDo })
+                )
             );
         }
     }]);
@@ -734,7 +939,7 @@ var CommandBox = function (_React$Component3) {
     return CommandBox;
 }(React.Component);
 
-ReactDOM.render(React.createElement(Page, null), document.getElementById('content'));
+exports.default = CommandBox;
 
 /***/ })
 /******/ ]);
