@@ -1,0 +1,38 @@
+/* Page Component */
+.page {
+    margin: 30px 20px;
+}
+
+/* Profile Component */
+.profile {
+    display: block;
+    border: 2px solid gray;
+    margin: 10px;
+    padding: 10px;
+}
+
+#already {
+    font-size: 0.9em;
+    color: dimgrey;
+    text-align: right;
+}
+
+/* Window Component */
+.window {
+    display: block;
+    border: 2px solid gray;
+    margin: 10px;
+    padding: 10px;
+    height: 100%;
+}
+
+/* Command Box Component */
+.commandBox{
+    display: block;
+    text-align: center;
+}
+.commandBox input {
+    width: 90%;
+    height: 40px;
+    margin: 10px;
+}
