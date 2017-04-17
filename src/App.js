@@ -2,8 +2,8 @@
  * Created by Joy on 4/3/17.
  */
 
-
-import React from 'react';
+import React from 'react'
+import {ErrorCode} from './Constants'
 import SignIn from './profile/SignIn.react'
 import SignUp from './profile/SignUp.react'
 import Profile from './profile/Profile.react'
@@ -70,9 +70,9 @@ export default class App extends React.Component {
             profilePanel = <Profile userName={this.state.userName} afterLogOut={this.afterLogOut}/>;
         }
         /*let Window_div = null;
-        if (this.state.profile === 'SignedIn') {
-            Window_div = <Window />;
-        }*/
+         if (this.state.profile === 'SignedIn') {
+         Window_div = <Window />;
+         }*/
         return (
             <div className="page">
                 {profilePanel}
@@ -101,7 +101,6 @@ class Window extends React.Component {
             dataType: 'json',
             cache: false,
             success: function (data) {
-                console.log(data);
                 this.setState({toDoList: data.todo_list});
             }.bind(this)
         })
@@ -141,8 +140,8 @@ class Window extends React.Component {
                     afterDelete={this.afterDelete}
                     afterCompleteToggle={this.afterCompleteToggle}
                 />
-                )
-            }
+            )
+        }
 
         let uncompletedItemGroup = [];
         for (let i = 0; i<toDoList.length; i++) {
