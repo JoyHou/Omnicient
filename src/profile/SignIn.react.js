@@ -1,7 +1,7 @@
 import React from 'react';
 import {ErrorCode} from '../Constants'
 import Config from '../Config'
-import $ from 'jquery'
+import $$ from '../MyQuery'
 import '../main.css'
 
 export default class SignIn extends React.Component{
@@ -20,7 +20,7 @@ export default class SignIn extends React.Component{
 
     signInHandler(e) {
         e.preventDefault();
-        $.ajax({
+        $$.ajax({
             url: Config.endPoint + '/profile/signin',
             dataType: 'json',
             type: 'POST',

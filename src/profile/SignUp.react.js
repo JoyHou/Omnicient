@@ -2,7 +2,7 @@
 import React from 'react';
 import {ErrorCode} from '../Constants'
 import Config from '../Config'
-import $ from 'jquery'
+import $$ from '../MyQuery'
 import '../main.css'
 
 export default class SignUp extends React.Component{
@@ -23,7 +23,7 @@ export default class SignUp extends React.Component{
 
     signUpHandler(e) {
         e.preventDefault();
-        $.ajax({
+        $$.ajax({
             url: Config.endPoint + '/profile/signup',
             dataType: 'json',
             type: 'POST',

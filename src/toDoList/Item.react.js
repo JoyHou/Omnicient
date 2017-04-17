@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import Config from '../Config'
-import $ from 'jquery'
+import $$ from '../MyQuery'
 import '../main.css'
 
 export default class Item extends React.Component {
@@ -24,7 +24,7 @@ export default class Item extends React.Component {
             this.setState({completed: true});
         }
 
-        $.ajax({
+        $$.ajax({
             url: Config.endPoint + '/todo/update',
             type: 'POST',
             dataType: 'json',
@@ -40,12 +40,12 @@ export default class Item extends React.Component {
                 } else {
                     alert("There is something goes wrong, please try agian later.");
                 }
-            }
+            }.bind(this),
         })
     }
 
     deleteHandler() {
-        $.ajax({
+        $$.ajax({
             url: Config.endPoint + '/todo/delete',
             type: 'POST',
             dataType: 'json',

@@ -4,7 +4,7 @@
 
 import React from 'react';
 import Config from '../Config'
-import $ from 'jquery'
+import $$ from '../MyQuery'
 import '../main.css'
 
 export default class Profile extends React.Component {
@@ -18,7 +18,7 @@ export default class Profile extends React.Component {
     }
 
     logOutHandler() {
-        $.ajax({
+        $$.ajax({
             url: Config.endPoint + '/profile/logout',
             dataType: 'json',
             type: 'POST',

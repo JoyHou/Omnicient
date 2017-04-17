@@ -11,6 +11,7 @@ import Config from './Config'
 import Item from './toDoList/Item.react'
 import CommandBox from './CommandBox.react'
 import $ from 'jquery'
+import $$ from './MyQuery'
 import './main.css'
 
 export default class App extends React.Component {
@@ -27,7 +28,7 @@ export default class App extends React.Component {
     }
 
     componentWillMount() {
-        $.ajax({
+        $$.ajax({
             url: Config.endPoint + '/profile',
             dataType: 'json',
             cache: false,
@@ -99,7 +100,7 @@ class Window extends React.Component {
     }
 
     componentWillMount() {
-        $.ajax({
+        $$.ajax({
             url: Config.endPoint + '/todo',
             dataType: 'json',
             cache: false,
@@ -160,6 +161,7 @@ class Window extends React.Component {
                         id={toDoList[i].id}
                         key={0 + toDoList[i].id}
                         afterDelete={this.afterDelete}
+                        afterCompleteToggle={this.afterCompleteToggle}
                     />
                 )
             }
