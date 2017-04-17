@@ -37,6 +37,8 @@ export default class Item extends React.Component {
             success: function(data) {
                 if (data.success) {
                     this.props.afterCompleteToggle(data);
+                } else {
+                    alert("There is something goes wrong, please try agian later.");
                 }
             }
         })
@@ -52,6 +54,8 @@ export default class Item extends React.Component {
             success: function (data) {
                 if (data.success) {
                     this.props.afterDelete(data);
+                } else {
+                    alert("There is something goes wrong, please try agian later.");
                 }
             }.bind(this)
         })

@@ -68,6 +68,11 @@ export default class SignUp extends React.Component{
         let errorMessage = "";
         if (this.state.errorCode ===ErrorCode.ACCOUNT__ACCOUNT_ALREADY_EXISITS) {
             errorMessage = "You already have an account, please sign in.";
+        } else if (
+            this.state.errorCode !== ErrorCode.ACCOUNT__ACCOUNT_ALREADY_EXISITS
+            && this.state.errorCode !== 0
+        ) {
+            alert("There is something goes wrong, please try again later.")
         }
 
 

@@ -26,6 +26,8 @@ export default class Profile extends React.Component {
             success: function (data) {
                 if (data.success) {
                     this.props.afterLogOut();
+                } else {
+                    alert("There is something goes wrong, please try again later.");
                 }
             }.bind(this)
         })

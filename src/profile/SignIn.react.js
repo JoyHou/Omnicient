@@ -51,6 +51,12 @@ export default class SignIn extends React.Component{
             errorMessage = "User name does not exist, please sign up."
         } else if (this.state.errorCode === ErrorCode.ACCOUNT__ACCOUNT_PASSWORD_NOT_MATCH) {
             errorMessage = "The user name and/or password were wrong, please try again."
+        } else if (
+            this.state.errorCode !== ErrorCode.ACCOUNT__ACCOUNT_NOT_EXISITS
+            && this.state.errorCode !== ErrorCode.ACCOUNT__ACCOUNT_PASSWORD_NOT_MATCH
+            && this.state.errorCode !== 0
+        ) {
+            alert("There is something goes wrong, please try again later.")
         }
         return (
             <div className="profile col-sm-2">

@@ -32,6 +32,7 @@ export default class App extends React.Component {
             dataType: 'json',
             cache: false,
             success: function(data) {
+                console.log(data);
                 if (data.success === false) {
                     this.setState({profile: 'SignUp'})
                 } else if (data.profile.user_name) {
@@ -62,11 +63,13 @@ export default class App extends React.Component {
 
     render() {
         let profilePanel = null;
+        let window = null;
         if (this.state.profile === 'SignUp') {
             profilePanel = <SignUp profileToggle={this.profileToggle} afterSigned={this.afterSigned}/>;
         } else if (this.state.profile === 'SignIn') {
             profilePanel = <SignIn profileToggle={this.profileToggle} afterSigned={this.afterSigned}/>;
         } else if (this.state.profile === 'SignedIn') {
+            window = <Window />;
             profilePanel = <Profile userName={this.state.userName} afterLogOut={this.afterLogOut}/>;
         }
         /*let Window_div = null;
@@ -76,7 +79,7 @@ export default class App extends React.Component {
         return (
             <div className="page">
                 {profilePanel}
-                <Window />
+                {window}
             </div>
         )
     }
@@ -101,7 +104,11 @@ class Window extends React.Component {
             dataType: 'json',
             cache: false,
             success: function (data) {
-                this.setState({toDoList: data.todo_list});
+                if(data.success) {
+                    this.setState({toDoList: data.todo_list});
+                } else {
+                    alert("There is something goes wrong, please try again");
+                }
             }.bind(this)
         })
     }
