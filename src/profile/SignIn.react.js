@@ -9,8 +9,8 @@ export default class SignIn extends React.Component{
         super();
         this.state = {
             errorCode: 0,
-            userName: null,
-            password: null
+            userName: 'TestUser',
+            password: '1234'
         };
 
         this.signInHandler = this.signInHandler.bind(this);
@@ -63,10 +63,12 @@ export default class SignIn extends React.Component{
                 <h2>Sign In</h2>
                 <form className="form-horizontal">
                     <label className="control-label">User Name</label>
-                    <input className="form-control" type="text" name="userName" onChange={this.userNameHandler}/>
+                    <input className="form-control" type="text" name="userName"
+                           onChange={this.userNameHandler} value={this.state.userName}/>
                     <br/>
                     <label className="control-label">Password</label>
-                    <input className="form-control" type="password" name="password" onChange={this.passwordHandler}/>
+                    <input className="form-control" type="password" name="password"
+                           onChange={this.passwordHandler} value={this.state.password}/>
                     <br/>
                     <p id="already">Don't have an account?<a href="#" onClick={this.props.profileToggle}> Sign up</a></p>
                     <input type="submit" value="Sign In" className="btn btn-success" onClick={this.signInHandler}/>

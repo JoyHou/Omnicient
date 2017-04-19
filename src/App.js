@@ -35,7 +35,7 @@ export default class App extends React.Component {
             success: function(data) {
                 console.log(data);
                 if (data.success === false) {
-                    this.setState({profile: 'SignUp'})
+                    this.setState({profile: 'SignIn'})
                 } else if (data.profile.user_name) {
                     this.setState({profile: 'SignedIn', userName: data.profile.user_name})
                 }
@@ -73,10 +73,6 @@ export default class App extends React.Component {
             window = <Window />;
             profilePanel = <Profile userName={this.state.userName} afterLogOut={this.afterLogOut}/>;
         }
-        /*let Window_div = null;
-         if (this.state.profile === 'SignedIn') {
-         Window_div = <Window />;
-         }*/
         return (
             <div className="page">
                 {profilePanel}

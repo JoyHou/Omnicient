@@ -18,19 +18,13 @@ export default class Item extends React.Component {
     }
 
     itemCompletedHandler() {
-        if (this.state.completed) {
-            this.setState({completed: false});
-        } else {
-            this.setState({completed: true});
-        }
-
         $$.ajax({
             url: Config.endPoint + '/todo/update',
             type: 'POST',
             dataType: 'json',
             data: {
                 content: this.state.content,
-                completed:this.state.completed,
+                completed:!this.state.completed,
                 id: this.props.id
             },
             cache: false,
@@ -40,7 +34,7 @@ export default class Item extends React.Component {
                 } else {
                     alert("There is something goes wrong, please try agian later.");
                 }
-            }.bind(this),
+            }.bind(this)
         })
     }
 
@@ -62,9 +56,15 @@ export default class Item extends React.Component {
     }
 
     render() {
+        let checkedMark = '';
+        if (this.state.completed) {
+            checkedMark = 'checked';
+        } else {
+            checkedMark = false;
+        }
         return (
             <div className="itemGroup alert alert-info">
-                <input type="checkbox" onClick={this.itemCompletedHandler}/>
+                <input type="checkbox" onClick={this.itemCompletedHandler} checked={checkedMark}/>
                 <div>{this.state.content}</div>
                 <a href="#" onClick={this.deleteHandler}>&times;</a>
             </div>
