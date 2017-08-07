@@ -1,7 +1,24 @@
 body {
     margin: 0;
     padding: 0;
+    background: url("pic/bg1.jpg")no-repeat center center fixed;
+
+
 }
+
+html,
+body,
+.view {
+    height: 100%;
+}
+
+.view {
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
 /* Page Component */
 .page {
     margin: 30px 20px;
@@ -10,9 +27,12 @@ body {
 /* Profile Component */
 .profile {
     display: block;
+    height: 350px;
     border: 2px solid gray;
     margin: 10px;
     padding: 10px;
+    background-color: #e1f8ea;
+    min-width: 150px;
 }
 
 #already {
@@ -24,10 +44,13 @@ body {
 /* Window Component */
 .window {
     display: block;
+    min-width: 300px;
     border: 2px solid gray;
     margin: 10px;
     padding: 10px;
     height: 800px;
+    background-color: #e1f8ea;
+
 }
 .window #showCompleted input {
     display: inline;
@@ -37,12 +60,14 @@ body {
 }
 .window #showCompleted label {
     display: inline;
+    width: 250px;
     margin: 0 15px;
     font-size: 1.0em;
 }
 .window #showCompleted {
     display: block;
-    margin-left: 70%;
+    width: 250px;
+    text-align: right;
 }
 
 /* Command Box Component */

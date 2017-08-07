@@ -18,6 +18,7 @@ export default class Item extends React.Component {
     }
 
     itemCompletedHandler() {
+        this.setState({completed: !this.state.completed});
         $$.ajax({
             url: Config.endPoint + '/todo/update',
             type: 'POST',
@@ -56,15 +57,19 @@ export default class Item extends React.Component {
     }
 
     render() {
-        let checkedMark = '';
+        let checkedMarkInput = '';
         if (this.state.completed) {
-            checkedMark = 'checked';
+            checkedMarkInput =
+                <input type="checkbox" onClick={this.itemCompletedHandler} checked='checked'/>
+
         } else {
-            checkedMark = false;
+            checkedMarkInput =
+                <input type="checkbox" onClick={this.itemCompletedHandler} />
+
         }
         return (
             <div className="itemGroup alert alert-info">
-                <input type="checkbox" onClick={this.itemCompletedHandler} checked={checkedMark}/>
+                {checkedMarkInput}
                 <div>{this.state.content}</div>
                 <a href="#" onClick={this.deleteHandler}>&times;</a>
             </div>

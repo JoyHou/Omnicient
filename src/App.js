@@ -158,6 +158,7 @@ class Window extends React.Component {
                         key={0 + toDoList[i].id}
                         afterDelete={this.afterDelete}
                         afterCompleteToggle={this.afterCompleteToggle}
+
                     />
                 )
             }
